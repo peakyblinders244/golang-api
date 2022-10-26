@@ -36,5 +36,5 @@ func main() {
 		userRoutes.GET("/profile", userController.Profile)
 		userRoutes.PUT("/profile", userController.Update)
 	}
-	r.Run(":%s", port)
+	r.Run(":" + port)
 }
