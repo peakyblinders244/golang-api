@@ -8,6 +8,7 @@ import (
 	"golang-api/repository"
 	"golang-api/service"
 	"gorm.io/gorm"
+	"os"
 )
 
 var (
@@ -23,6 +24,7 @@ var (
 func main() {
 	defer config.CloseDatabaseConnection(db)
 	r := gin.Default()
+	port := os.Getenv("PORT")
 	authRoutes := r.Group("api/auth")
 	{
 		authRoutes.POST("/login", authController.Login)
@@ -34,5 +36,5 @@ func main() {
 		userRoutes.GET("/profile", userController.Profile)
 		userRoutes.PUT("/profile", userController.Update)
 	}
-	r.Run()
+	r.Run(":%s", port)
 }
