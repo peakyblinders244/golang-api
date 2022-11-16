@@ -51,7 +51,7 @@ func (service *authService) CreateUser(user dto.RegisterDTO) entity.User {
 	verificationCode := helper.Encode(code)
 	env := config.LoadEnv()
 	emailData := helper.EmailData{
-		URL:       env.CLIENT_URL + "/verify/" + verificationCode,
+		URL:       env.CLIENT_URL + "/api/auth/verify/" + verificationCode,
 		FirstName: userToCreate.Name,
 		Subject:   "Your account verification code",
 		Code:      verificationCode,
