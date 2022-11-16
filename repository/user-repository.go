@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"golang-api/entity"
 	"log"
 
@@ -88,7 +89,7 @@ func (db *userConnection) VerifyEmail(verificationCode string) (entity.User, err
 	var user entity.User
 	err := db.connection.Where("verification_code = ?", verificationCode).Take(&user).Error
 	if err != nil {
-		return user, err
+		return user, errors.New("invalid")
 	}
 	user.VerificationCode = ""
 	user.Verified = true

@@ -47,13 +47,14 @@ func (service *authService) CreateUser(user dto.RegisterDTO) entity.User {
 	userToCreate := entity.User{}
 	err := smapping.FillStruct(&userToCreate, smapping.MapFields(&user))
 	code := randstr.String(20)
+	userToCreate.VerificationCode = code
 	verificationCode := helper.Encode(code)
-	userToCreate.VerificationCode = verificationCode
 	env := config.LoadEnv()
 	emailData := helper.EmailData{
 		URL:       env.CLIENT_URL + "/verify/" + verificationCode,
 		FirstName: userToCreate.Name,
 		Subject:   "Your account verification code",
+		Code:      verificationCode,
 	}
 	helper.SendEmail(&userToCreate, &emailData)
 	if err != nil {

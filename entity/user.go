@@ -6,7 +6,7 @@ type User struct {
 	Name             string `gorm:"type:varchar(255)" json:"name"`
 	Email            string `gorm:"uniqueIndex;type:varchar(255)" json:"email"`
 	Password         string `gorm:"->;<-;not null" json:"-"`
-	VerificationCode string
+	VerificationCode string `gorm:"->;<-;not null" json:"-"`
 	Verified         bool   `gorm:"default:false" json:"verified"`
 	Token            string `gorm:"-" json:"token,omitempty"`
 }

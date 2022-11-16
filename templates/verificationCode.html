@@ -8,6 +8,7 @@
                     <td>
                         <p>Hi {{ .FirstName}},</p>
                         <p>Please verify your account to be able to login</p>
+                        <p>{{ .Code}}</p>
                         <table
                                 role="presentation"
                                 border="0"
@@ -27,7 +28,7 @@
                                         <tbody>
                                         <tr>
                                             <td>
-                                                <a href="{{.URL}}" target="_blank"
+                                                <a href="{{ .URL}}" target="_blank"
                                                 >Verify your account</a
                                                 >
                                             </td>
@@ -38,7 +39,7 @@
                             </tr>
                             </tbody>
                         </table>
-                        <p>Good luck! Codevo CEO.</p>
+                        <p>Good luck!</p>
                     </td>
                 </tr>
             </table>

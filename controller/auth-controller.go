@@ -13,6 +13,7 @@ import (
 type AuthController interface {
 	Login(ctx *gin.Context)
 	Register(ctx *gin.Context)
+	VerifyEmail(ctx *gin.Context)
 }
 
 type authController struct {
@@ -73,4 +74,17 @@ func (c *authController) Register(ctx *gin.Context) {
 		response := helper.BuildResponse(true, message, createdUser)
 		ctx.JSON(http.StatusCreated, response)
 	}
+}
+
+func (c *authController) VerifyEmail(ctx *gin.Context) {
+	code := ctx.Params.ByName("verification_code")
+	verification_code, _ := helper.Decode(code)
+	resp, err := c.authService.VerifyEmail(verification_code)
+	if err != nil {
+		response := helper.BuildErrorResponse("Failed to process request", err.Error(), helper.EmptyObj{})
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
+	response := helper.BuildResponse(true, "OK!", resp)
+	ctx.JSON(http.StatusOK, response)
 }
