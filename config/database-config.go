@@ -2,21 +2,20 @@ package config
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
 	"golang-api/entity"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"os"
+	"log"
 )
 
 func SetupDatabaseConnection() *gorm.DB {
-
-	dbUser := os.Getenv("DB_USER")
-	dbPass := os.Getenv("DB_PASS")
-	dbHost := os.Getenv("DB_HOST")
-	dbName := os.Getenv("DB_NAME")
-	dbPort := os.Getenv("DB_PORT")
-
-	dsn := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=require TimeZone=Asia/Shanghai", dbHost, dbUser, dbPass, dbPort, dbName)
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	env := LoadEnv()
+	dsn := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s TimeZone=Asia/Shanghai", env.DB_HOST, env.DB_USER, env.DB_PASS, env.DB_PORT, env.DB_NAME)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("Failed to create a connection to database")

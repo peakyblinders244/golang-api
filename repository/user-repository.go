@@ -16,6 +16,7 @@ type UserRepository interface {
 	IsDuplicateEmail(email string) (tx *gorm.DB)
 	FindByEmail(email string) entity.User
 	ProfileUser(userID string) entity.User
+	VerifyEmail(verificationCode string) (entity.User, error)
 }
 
 type userConnection struct {
@@ -70,7 +71,7 @@ func (db *userConnection) FindByEmail(email string) entity.User {
 
 func (db *userConnection) ProfileUser(userID string) entity.User {
 	var user entity.User
-	db.connection.Preload("Books").Preload("Books.User").Find(&user, userID)
+	db.connection.Preload("Groups").Preload("Groups.User").Find(&user, userID)
 	return user
 }
 
@@ -81,4 +82,16 @@ func hashAndSalt(pwd []byte) string {
 		panic("Failed to hash a password")
 	}
 	return string(hash)
+}
+
+func (db *userConnection) VerifyEmail(verificationCode string) (entity.User, error) {
+	var user entity.User
+	err := db.connection.Where("verification_code = ?", verificationCode).Take(&user).Error
+	if err != nil {
+		return user, err
+	}
+	user.VerificationCode = ""
+	user.Verified = true
+	db.connection.Save(&user)
+	return user, err
 }

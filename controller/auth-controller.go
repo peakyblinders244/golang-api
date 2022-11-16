@@ -35,6 +35,12 @@ func (c *authController) Login(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
+	// check if user verified
+	if !c.authService.IsUserVerified(loginDTO.Email) {
+		response := helper.BuildErrorResponse("Failed to process request", "User is not verified", helper.EmptyObj{})
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		return
+	}
 	authResult := c.authService.VerifyCredential(loginDTO.Email, loginDTO.Password)
 	if v, ok := authResult.(entity.User); ok {
 		generatedToken := c.jwtService.GenerateToken(strconv.FormatUint(v.ID, 10))
@@ -63,7 +69,8 @@ func (c *authController) Register(ctx *gin.Context) {
 		createdUser := c.authService.CreateUser(registerDTO)
 		token := c.jwtService.GenerateToken(strconv.FormatUint(createdUser.ID, 10))
 		createdUser.Token = token
-		response := helper.BuildResponse(true, "OK!", createdUser)
+		message := "We sent an email with a verification code to " + createdUser.Email
+		response := helper.BuildResponse(true, message, createdUser)
 		ctx.JSON(http.StatusCreated, response)
 	}
 }
